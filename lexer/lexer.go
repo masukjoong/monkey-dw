@@ -50,9 +50,29 @@ func (l *Lexer) NextToken() token.Token {
 
 	switch l.ch {
 	case '=':
-		tok = newToken(token.ASSIGN, l.ch)
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = newTokenWithString(token.EQ, string(ch)+string(l.ch))
+		} else {
+			tok = newToken(token.ASSIGN, l.ch)
+		}
 	case '+':
 		tok = newToken(token.PLUS, l.ch)
+	case '-':
+		tok = newToken(token.MINUS, l.ch)
+	case '!':
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = newTokenWithString(token.NOT_EQ, string(ch)+string(l.ch))
+		} else {
+			tok = newToken(token.BANG, l.ch)
+		}
+	case '/':
+		tok = newToken(token.SLASH, l.ch)
+	case '*':
+		tok = newToken(token.ASTERISK, l.ch)
 	case ',':
 		tok = newToken(token.COMMA, l.ch)
 	case ';':
@@ -65,13 +85,17 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.LBRACE, l.ch)
 	case '}':
 		tok = newToken(token.RBRACE, l.ch)
+	case '<':
+		tok = newToken(token.LT, l.ch)
+	case '>':
+		tok = newToken(token.GT, l.ch)
 	case EOF:
 		tok = newTokenWithString(token.EOF, "")
 	default:
 		if isLetter(l.ch) {
-			identOrKeyword := l.readIdentifier()
-			tokenType := token.LookupIdent(identOrKeyword)
-			return newTokenWithString(tokenType, identOrKeyword)
+			identifier := l.readIdentifier()
+			tokenType := token.LookupIdent(identifier)
+			return newTokenWithString(tokenType, identifier)
 		} else if isDigit(l.ch) {
 			return newTokenWithString(token.INT, l.readNumber())
 		} else {
@@ -111,4 +135,12 @@ func isLetter(ch byte) bool {
 
 func isDigit(ch byte) bool {
 	return '0' <= ch && ch <= '9'
+}
+
+func (l *Lexer) peekChar() byte {
+	if l.readPosition >= len(l.input) {
+		return EOF
+	} else {
+		return l.input[l.readPosition]
+	}
 }
