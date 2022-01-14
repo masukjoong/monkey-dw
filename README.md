@@ -19,5 +19,5 @@ Monkey is a relatively simple language that has the following features:
   5. the evaluator
 
 # Useful references
-## Go
+### Go
 - Go Module System How-to: https://blog.francium.tech/go-modules-go-project-set-up-without-gopath-1ae601a4e868
