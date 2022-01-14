@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"monkey-dw/token"
+	"monkey/token"
 )
 
 const (

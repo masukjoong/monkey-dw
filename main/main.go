@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"monkey-dw/repl"
+	"monkey/repl"
 	"os"
 	"os/user"
 )
