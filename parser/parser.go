@@ -5,6 +5,7 @@ import (
 	"monkey/ast"
 	"monkey/lexer"
 	"monkey/token"
+	"strconv"
 )
 
 type Parser struct {
@@ -34,6 +35,11 @@ func (p *Parser) peekError(t token.TokenType) {
 	p.errors = append(p.errors, msg)
 }
 
+func (p *Parser) curError(t ...token.TokenType) {
+	msg := fmt.Sprintf("expected current token to be one of %s, got %s instead", t, p.curToken.Type)
+	p.errors = append(p.errors, msg)
+}
+
 func (p *Parser) nextToken() {
 	p.curToken = p.peekToken
 	p.peekToken = p.l.NextToken()
@@ -57,6 +63,8 @@ func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
 	case token.LET:
 		return p.parseLetStatement()
+	case token.RETURN:
+		return p.parseReturnStatement()
 	default:
 		return nil
 	}
@@ -101,4 +109,30 @@ func (p *Parser) expectPeek(tokenType token.TokenType) bool {
 	} else {
 		return false
 	}
+}
+
+func (p *Parser) parseReturnStatement() ast.Statement {
+	stmt := &ast.ReturnStatement{Token: p.curToken}
+	p.nextToken()
+
+	if p.curToken.Type != token.INT && p.curToken.Type != token.IDENT {
+		p.curError(token.INT, token.IDENT)
+		return nil
+	} else if p.curTokenIs(token.INT) {
+		intValue, err := strconv.Atoi(p.curToken.Literal)
+		if err != nil {
+			panic("Unexpected error converting integer string to int")
+		}
+		stmt.ReturnValue = &ast.IntExpression{Token: p.curToken, Value: intValue}
+	} else if p.curTokenIs(token.IDENT) {
+		if !p.peekTokenIs(token.LPAREN) {
+			stmt.ReturnValue = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+		} else {
+			// TODO: Expression parsing
+			for !p.curTokenIs(token.SEMICOLON) {
+				p.nextToken()
+			}
+		}
+	}
+	return stmt
 }
