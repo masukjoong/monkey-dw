@@ -158,7 +158,7 @@ func TestParser_ParseInfixOperator(t *testing.T) {
 	program := p.ParseProgram()
 	checkParseErrors(t, p)
 
-	answers := []string{"(3 + 4);", "((-3)+4);"}
+	answers := []string{"(3 + 4);", "((-3) + 4);"}
 
 	for i, stmt := range program.Statements {
 		println(i, stmt.String())

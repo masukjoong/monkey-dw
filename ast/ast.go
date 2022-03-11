@@ -147,10 +147,10 @@ func (po *PrefixOperator) TokenLiteral() string {
 }
 func (po *PrefixOperator) String() string {
 	var out bytes.Buffer
-	out.WriteString("(" + " ")
+	out.WriteString("(")
 	out.WriteString(po.Token.Literal)
 	out.WriteString(po.Value.String())
-	out.WriteString(" " + ")")
+	out.WriteString(")")
 	return out.String()
 }
 
