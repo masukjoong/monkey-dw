@@ -75,28 +75,96 @@ return 993322;
 	program := p.ParseProgram()
 	checkParseErrors(t, p)
 
-	tests := []struct {
-		expectedExpression string
-	}{
-		{"10"},
-		{"20"},
-		{"993322"},
+	if len(program.Statements) != 3 {
+		t.Fatalf("program.Statements does not contain 3 statements. got=%d", len(program.Statements))
 	}
 
-	for i, tt := range tests {
-		stmt := program.Statements[i]
+	for _, stmt := range program.Statements {
+		returnStmt, ok := (stmt).(*ast.ReturnStatement)
+		if !ok {
+			t.Errorf("stmt not *ast.ReturnStatement. got=%T", stmt)
+			continue
+		}
 
-		if stmt.TokenLiteral() != "return" {
+		if returnStmt.TokenLiteral() != "return" {
 			t.Errorf("s.TokenLiteral not 'return'. got=%q", stmt.TokenLiteral())
 		}
+	}
+}
 
-		rs, ok := (stmt).(*ast.ReturnStatement)
+func TestParser_parseExpressionStatement(t *testing.T) {
+	code := `
+1;
+a;
+let a = 10;
+return 10;
+`
+	l := lexer.New(code)
+	p := New(l)
+
+	program := p.ParseProgram()
+	checkParseErrors(t, p)
+
+	// print statements for debugging purposes
+	for _, stmt := range program.Statements {
+		println(stmt.String())
+	}
+
+	if len(program.Statements) != 4 {
+		t.Fatalf("program.Statements does not contain 4 statements. got=%d", len(program.Statements))
+	}
+}
+
+func TestParser_ParsePrefixOperator(t *testing.T) {
+	code := `
+-123;
+!test;
+`
+	l := lexer.New(code)
+	p := New(l)
+
+	program := p.ParseProgram()
+	checkParseErrors(t, p)
+
+	answers := []string{"( -123 )", "( !test )"}
+
+	for i, stmt := range program.Statements {
+		println(stmt.String())
+
+		es, ok := (stmt).(*ast.ExpressionStatement)
 		if !ok {
-			t.Errorf("s not *ast.ReturnStatement. got=%T", stmt)
+			t.Errorf("statement is not an ast.ExpressionStatement")
 		}
 
-		if rs.ReturnValue.TokenLiteral() != tt.expectedExpression {
-			t.Errorf("rs.ReturnValue.TokenLiteral() not %s. got=%s", tt.expectedExpression, rs.ReturnValue.TokenLiteral())
+		po, ok := es.Expression.(*ast.PrefixOperator)
+		if !ok {
+			t.Errorf("Expression statement's expression is not PrefixOperator")
+		}
+
+		if po.String() != answers[i] {
+			t.Errorf("got = %q, expected = %q", po.String(), answers[i])
+		}
+	}
+}
+
+func TestParser_ParseInfixOperator(t *testing.T) {
+	code := `
+3 + 4;
+-3 + 4;
+`
+	l := lexer.New(code)
+	p := New(l)
+
+	program := p.ParseProgram()
+	checkParseErrors(t, p)
+
+	answers := []string{"(3 + 4);", "((-3)+4);"}
+
+	for i, stmt := range program.Statements {
+		println(i, stmt.String())
+
+		if stmt.String() != answers[i] {
+			t.Errorf("got = %q, expected = %q", stmt.String(), answers[i])
 		}
 	}
 }
