@@ -126,7 +126,7 @@ func TestParser_ParsePrefixOperator(t *testing.T) {
 	program := p.ParseProgram()
 	checkParseErrors(t, p)
 
-	answers := []string{"( -123 )", "( !test )"}
+	answers := []string{"(-123)", "(!test)"}
 
 	for i, stmt := range program.Statements {
 		println(stmt.String())
