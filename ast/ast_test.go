@@ -72,12 +72,12 @@ func TestPrefixOperator_String(t *testing.T) {
 		Statements: []Statement{
 			&ExpressionStatement{
 				Token: token.Token{Type: token.MINUS, Literal: "-"},
-				Expression: &PrefixOperator{Token: token.Token{Type: token.MINUS, Literal: "-"}, Value: &Identifier{
+				Expression: &PrefixOperator{Token: token.Token{Type: token.MINUS, Literal: "-"}, Operator: token.MINUS, Right: &Identifier{
 					Token: token.Token{Type: token.IDENT, Literal: "123"}, Value: "123"},
 				},
 			},
 		},
 	}
 
-	assertEquals(t, program, "-123;")
+	assertEquals(t, program, "(-123);")
 }
