@@ -33,7 +33,19 @@ const (
 	ReturnValueObj = "RETURN_VALUE"
 	ErrorObj       = "ERROR"
 	FunctionObj    = "FUNCTION"
+	StringObj      = "STRING"
 )
+
+type String struct {
+	Value string
+}
+
+func (String) Type() ObjectType {
+	return StringObj
+}
+func (s *String) Inspect() string {
+	return s.Value
+}
 
 type Function struct {
 	Parameters []*ast.Identifier

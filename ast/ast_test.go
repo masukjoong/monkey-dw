@@ -79,5 +79,5 @@ func TestPrefixOperator_String(t *testing.T) {
 		},
 	}
 
-	assertEquals(t, program, "(-123);")
+	assertEquals(t, program, "(-123)")
 }

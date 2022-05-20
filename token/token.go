@@ -39,6 +39,7 @@ const (
 	FALSE    = "FALSE"
 	EQ       = "EQ"
 	NOT_EQ   = "NOT_EQ"
+	STRING   = "STRING"
 )
 
 var keywords = map[string]TokenType{
