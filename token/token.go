@@ -40,6 +40,11 @@ const (
 	EQ       = "EQ"
 	NOT_EQ   = "NOT_EQ"
 	STRING   = "STRING"
+	// Array
+	LBRACKET = "["
+	RBRACKET = "]"
+	// Hash
+	COLON = ":"
 )
 
 var keywords = map[string]TokenType{
