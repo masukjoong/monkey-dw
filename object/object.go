@@ -26,6 +26,14 @@ func (ReturnValue) Type() ObjectType {
 	return ReturnValueObj
 }
 
+type BuiltinFunction func(args ...Object) Object
+type Builtin struct {
+	Fn BuiltinFunction
+}
+
+func (Builtin) Type() ObjectType { return BuiltinObj }
+func (Builtin) Inspect() string  { return "builtin function" }
+
 const (
 	IntegerObj     = "INTEGER"
 	BooleanObj     = "BOOLEAN"
@@ -34,6 +42,7 @@ const (
 	ErrorObj       = "ERROR"
 	FunctionObj    = "FUNCTION"
 	StringObj      = "STRING"
+	BuiltinObj     = "BUILTIN"
 )
 
 type String struct {
